@@ -1,0 +1,181 @@
+﻿@model EmployeeManagement.Models.EmployeeIndexViewModel
+@using EmployeeManagement.Services
+@inject EmployeeOptionsService Options
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index-- Hello @ViewData["User"]</h2>
+<p>
+    <a asp-controller="Login" asp-action="Logout">Login out</a>
+</p>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-controller="Employees" asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            First Name: <input asp-for="SearchFirstName">
+
+            Department: @Html.DropDownList("SearchDepartment",
+                Options.ListDepartments_2().Select(d =>
+                new SelectListItem() { Text = d, Value = d }))
+
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="FirstNameSort"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        FirstName
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="LastNameSort"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        LastName
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="GenderSort"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Gender
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="BirthSort"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Birth
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="DepartmentSortParm"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Department
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="AddressSortParm"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Address
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="PhoneSortParm"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Phone
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrderParam="EmailSortParm"
+                       asp-route-sortOrder="@(Model.SortOrder)"
+                       asp-route-currentOrderParam="@(Model.SortOrderParam)"
+                       asp-route-searchFirstName="@(Model.SearchFirstName)"
+                       asp-route-searchDepartment="@(Model.SearchDepartment)">
+                        Email
+                    </a>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.PageShow)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Birth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Department)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{
+        var prevDisabled = !Model.PageShow.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.PageShow.HasNextPage ? "disabled" : "";
+    }
+
+    <a asp-action="Index"
+       asp-route-sortOrderParam="@(Model.SortOrderParam)"
+       asp-route-sortOrder="@(Model.SortOrder)"
+       asp-route-page="@(Model.PageShow.PageIndex - 1)"
+       asp-route-searchFirstName="@(Model.SearchFirstName)"
+       asp-route-searchDepartment="@(Model.SearchDepartment)"
+       class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-action="Index"
+       asp-route-sortOrderParam="@(Model.SortOrderParam)"
+       asp-route-sortOrder="@(Model.SortOrder)"
+       asp-route-page="@(Model.PageShow.PageIndex + 1)"
+       asp-route-searchFirstName="@(Model.SearchFirstName)"
+       asp-route-searchDepartment="@(Model.SearchDepartment)"
+       class="btn btn-default @nextDisabled">
+        Next
+    </a>
+
+    page index:@Html.DisplayFor(model => model.PageShow.PageIndex)
+    total pages:@Html.DisplayFor(model => model.PageShow.TotalPages)
