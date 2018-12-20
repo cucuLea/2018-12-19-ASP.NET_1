@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +6,8 @@ using EmployeeManagement.Models;
 using Microsoft.Extensions.Configuration;
 using System.Linq.Expressions;
 using System;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 
 namespace EmployeeManagement.Controllers
 {   
@@ -24,7 +26,7 @@ namespace EmployeeManagement.Controllers
         public async Task<IActionResult> Index(
             string searchFirstName, string searchDepartment,
             int? page,
-            string currentOrderParam,string sortOrderParam ="FirstNameSort", string sortOrder="asc" 
+            string currentOrderParam,string sortOrderParam ="FirstName", string sortOrder="asc" 
             )
         {
            // if (!IsLogin()) { return RedirectToAction("Login", "Login"); } //login already?
@@ -34,7 +36,7 @@ namespace EmployeeManagement.Controllers
             employees = SearchEmployees(searchFirstName,searchDepartment,employees);
             //sort     
             sortOrder = JudgeSortOrder(sortOrderParam, currentOrderParam, sortOrder);            
-            employees = SortEmployees(sortOrder, sortOrderParam, currentOrderParam, employees);
+            employees = SortEmployees(sortOrder, sortOrderParam, employees);
 
 
             int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
@@ -198,47 +200,48 @@ namespace EmployeeManagement.Controllers
             return _context.Employee.Any(e => e.ID == id);
         }
 
-        private IQueryable<Employee> SortEmployees(string sortOrder, string sortOrderParam,string currentOrderParam,IQueryable<Employee> employees)
+        private IQueryable<Employee> SortEmployees(string sortOrder, string sortOrderParam,IQueryable<Employee> employees)
         {
-            Expression<Func<Employee,object>> sortExpression;
-            switch (sortOrderParam)
-            {  
-                case "FirstNameSort":
-                    sortExpression = e => e.FirstName;
-                    break;
-                case "LastNameSort":
-                    sortExpression = e => e.LastName;
-                    break;
-                case "GenderSort":
-                    sortExpression = e => e.Gender; 
-                    break;
-                case "BirthSort":
-                    sortExpression = e => e.Birth; 
-                    break;
-                case "DepartmentSortParm":
-                    sortExpression = e => e.Department; 
-                    break;
-                case "AddressSortParm":
-                    sortExpression = e => e.Address; 
-                    break;
-                case "PhoneSortParm":
-                    sortExpression = e => e.Phone;
-                    break;
-                case "EmailSortParm":
-                    sortExpression = e => e.Email; 
-                    break;
-                default:
-                    sortExpression = e => e.FirstName;
-                    break;
-            }
-            if ("desc".Equals(sortOrder))
-            {
-                employees=employees.OrderByDescending(sortExpression);
-            }
-            else
-            {
-                employees = employees.OrderBy(sortExpression);
-            }
+            employees = employees.OrderBy($"{sortOrderParam} {sortOrder}");
+            //Expression<Func<Employee,object>> sortExpression;
+            //switch (sortOrderParam)
+            //{  
+            //    case "FirstName":
+            //        sortExpression = e => e.FirstName;
+            //        break;
+            //    case "LastName":
+            //        sortExpression = e => e.LastName;
+            //        break;
+            //    case "Gender":
+            //        sortExpression = e => e.Gender; 
+            //        break;
+            //    case "Birth":
+            //        sortExpression = e => e.Birth; 
+            //        break;
+            //    case "Department":
+            //        sortExpression = e => e.Department; 
+            //        break;
+            //    case "Address":
+            //        sortExpression = e => e.Address; 
+            //        break;
+            //    case "Phone":
+            //        sortExpression = e => e.Phone;
+            //        break;
+            //    case "Email":
+            //        sortExpression = e => e.Email; 
+            //        break;
+            //    default:
+            //        sortExpression = e => e.FirstName;
+            //        break;
+            //}
+            //if ("desc".Equals(sortOrder))
+            //{
+            //    employees=employees.OrderByDescending(sortExpression);
+            //}
+            //else
+            //{
+            //    employees = employees.OrderBy(sortExpression);
+            //}
             return employees;
         }
 
